@@ -1,0 +1,2 @@
+../Core/Src/rgb_controller.c:12:6:RGB_Init	8	static
+../Core/Src/rgb_controller.c:29:6:RGB_SetColor	16	static

@@ -1,0 +1,2 @@
+../Core/Src/usb_controller.c:11:6:USB_Init	8	static
+../Core/Src/usb_controller.c:18:6:USB_Send_Data	16	static

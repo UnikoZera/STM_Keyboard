@@ -1,0 +1,13 @@
+{
+    "files.associations": {
+        "*.c": "c",
+        "rgb_controller.h": "c",
+        "stdint.h": "c",
+        "ranges": "c",
+        "adc_controller.h": "c",
+        "tim.h": "c",
+        "usbd_def.h": "c",
+        "keyboard_controller.h": "c",
+        "usb_controller.h": "c"
+    }
+}

@@ -27,7 +27,12 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "oled.h"
+#include "oled_optimize.h"
+#include "rgb_controller.h"
+#include "adc_controller.h"
+#include "usb_controller.h"
+#include "keyboard_controller.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -101,13 +106,18 @@ int main(void)
   MX_TIM4_Init();
   MX_USB_Device_Init();
   /* USER CODE BEGIN 2 */
-
+  Keyboard_Init();
+  HAL_Delay(100);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+
+
+
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
