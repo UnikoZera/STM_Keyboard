@@ -1,0 +1,5 @@
+../Core/Src/uart_vofa.c:16:6:VOFA_SendFloat	96	static
+../Core/Src/uart_vofa.c:42:6:VOFA_SendInt	88	static
+../Core/Src/uart_vofa.c:61:6:VOFA_SendSingleFloat	16	static
+../Core/Src/uart_vofa.c:70:6:VOFA_SendSingleInt	16	static
+../Core/Src/uart_vofa.c:83:6:VOFA_SendMixedData	96	static

@@ -7,6 +7,9 @@
 
 #include "adc_controller.h"
 
+
+#define ADC_FILTER_ALPHA 0.6f
+
 uint16_t buffer_adc_1[2];
 uint16_t buffer_adc_2[2];
 

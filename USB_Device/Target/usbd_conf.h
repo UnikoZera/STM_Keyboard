@@ -73,11 +73,11 @@
 /*---------- -----------*/
 #define USBD_DEBUG_LEVEL     0U
 /*---------- -----------*/
-#define USBD_LPM_ENABLED     1U
+#define USBD_LPM_ENABLED     0U
 /*---------- -----------*/
 #define USBD_SELF_POWERED     1U
 /*---------- -----------*/
-#define HID_FS_BINTERVAL     0xAU
+#define HID_FS_BINTERVAL     0x1U
 
 /****************************************/
 /* #define for FS and HS identification */

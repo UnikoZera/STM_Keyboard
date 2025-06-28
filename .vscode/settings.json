@@ -8,6 +8,11 @@
         "tim.h": "c",
         "usbd_def.h": "c",
         "keyboard_controller.h": "c",
-        "usb_controller.h": "c"
+        "usb_controller.h": "c",
+        "usbd_hid.h": "c",
+        "usb_device.h": "c",
+        "gpio.h": "c",
+        "oled_optimize.h": "c",
+        "keyboard_buttons.h": "c"
     }
 }

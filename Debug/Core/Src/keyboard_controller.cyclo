@@ -1,2 +1,2 @@
-../Core/Src/keyboard_controller.c:11:6:Keyboard_Init	1
-../Core/Src/keyboard_controller.c:22:6:Keyboard_Update	1
+../Core/Src/keyboard_controller.c:21:6:Keyboard_Init	1
+../Core/Src/keyboard_controller.c:31:6:Keyboard_Update	11

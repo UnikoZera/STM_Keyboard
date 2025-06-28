@@ -13,8 +13,6 @@
 #include "dma.h"
 #include <stdint.h>
 
-#define ADC_FILTER_ALPHA 0.6f
-
 extern uint16_t buffer_adc_1[2]; // 包含1·2
 extern uint16_t buffer_adc_2[2]; // 包含3·4
 
