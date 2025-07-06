@@ -1,3 +1,5 @@
-../Core/Src/rgb_controller.c:21:6:RGB_Init	16	static
-../Core/Src/rgb_controller.c:38:6:RGB_SetColor	32	static
-../Core/Src/rgb_controller.c:62:6:RGB_Update	8	static
+../Core/Src/rgb_controller.c:21:6:RGB_Init	8	static
+../Core/Src/rgb_controller.c:29:6:RGB_SetColor	16	static
+../Core/Src/rgb_controller.c:39:6:RGB_Clear	16	static
+../Core/Src/rgb_controller.c:48:6:RGB_Update	32	static
+../Core/Src/rgb_controller.c:80:6:HAL_TIM_PWM_PulseFinishedCallback	16	static

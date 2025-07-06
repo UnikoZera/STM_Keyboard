@@ -29,6 +29,8 @@ void ADC_Init(void)
 {
     HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED);
     HAL_ADCEx_Calibration_Start(&hadc2, ADC_SINGLE_ENDED);
+    HAL_Delay(10); // 等待校准完成
+    ADC_Start_DMA();
 }
 
 

@@ -30,6 +30,9 @@ void Keyboard_Init(void)
 
 void Keyboard_Update(void)
 {
+    // 读取ADC数据
+    ADC_Filter();
+
     // 读取mode按钮
     if (HAL_GPIO_ReadPin(Mode_Buttom_GPIO_Port, Mode_Buttom_Pin) == GPIO_PIN_RESET)
     {
@@ -97,7 +100,6 @@ void Keyboard_Update(void)
             // LEFT
         }
 
-
         if (filter_adc_1[1] > KEYBOARD_TRIGGER_THRESHOLD)
         {
             // UP
@@ -107,7 +109,6 @@ void Keyboard_Update(void)
         {
             // DOWN
         }
-
 
         if (filter_adc_2[1] > KEYBOARD_TRIGGER_THRESHOLD)
         {

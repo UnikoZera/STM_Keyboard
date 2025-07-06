@@ -13,6 +13,7 @@
         "usb_device.h": "c",
         "gpio.h": "c",
         "oled_optimize.h": "c",
-        "keyboard_buttons.h": "c"
+        "keyboard_buttons.h": "c",
+        "oled.h": "c"
     }
 }
