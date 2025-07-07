@@ -13,16 +13,21 @@
 uint16_t buffer_adc_1[2];
 uint16_t buffer_adc_2[2];
 
-uint16_t filter_adc_1[2];
-uint16_t filter_adc_2[2];
+uint16_t filter_adc_data[4]; // 用于存储滤波后的ADC数据
+uint16_t last_adc_data[4]; // 用于记录上一次的ADC数据
 
 void ADC_Filter(void)
 {
-	filter_adc_1[0] = ADC_FILTER_ALPHA * buffer_adc_1[0] + (1.0f - ADC_FILTER_ALPHA) * filter_adc_1[0];
-	filter_adc_1[1] = ADC_FILTER_ALPHA * buffer_adc_1[1] + (1.0f - ADC_FILTER_ALPHA) * filter_adc_1[1];
+	filter_adc_data[0] = ADC_FILTER_ALPHA * buffer_adc_1[0] + (1.0f - ADC_FILTER_ALPHA) * filter_adc_data[0];
+	filter_adc_data[1] = ADC_FILTER_ALPHA * buffer_adc_1[1] + (1.0f - ADC_FILTER_ALPHA) * filter_adc_data[1];
 
-	filter_adc_2[0] = ADC_FILTER_ALPHA * buffer_adc_2[0] + (1.0f - ADC_FILTER_ALPHA) * filter_adc_2[0];
-	filter_adc_2[1] = ADC_FILTER_ALPHA * buffer_adc_2[1] + (1.0f - ADC_FILTER_ALPHA) * filter_adc_2[1];
+	filter_adc_data[2] = ADC_FILTER_ALPHA * buffer_adc_2[0] + (1.0f - ADC_FILTER_ALPHA) * filter_adc_data[2];
+	filter_adc_data[3] = ADC_FILTER_ALPHA * buffer_adc_2[1] + (1.0f - ADC_FILTER_ALPHA) * filter_adc_data[3];
+
+    last_adc_data[0] = filter_adc_data[0];
+    last_adc_data[1] = filter_adc_data[1];
+    last_adc_data[2] = filter_adc_data[2];
+    last_adc_data[3] = filter_adc_data[3];
 }
 
 void ADC_Init(void)

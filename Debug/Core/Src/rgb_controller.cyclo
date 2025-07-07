@@ -2,4 +2,6 @@
 ../Core/Src/rgb_controller.c:29:6:RGB_SetColor	2
 ../Core/Src/rgb_controller.c:39:6:RGB_Clear	2
 ../Core/Src/rgb_controller.c:48:6:RGB_Update	9
-../Core/Src/rgb_controller.c:80:6:HAL_TIM_PWM_PulseFinishedCallback	2
+../Core/Src/rgb_controller.c:81:13:Hue_To_RGB	3
+../Core/Src/rgb_controller.c:107:6:RGB_RainbowCycle	3
+../Core/Src/rgb_controller.c:128:6:HAL_TIM_PWM_PulseFinishedCallback	2

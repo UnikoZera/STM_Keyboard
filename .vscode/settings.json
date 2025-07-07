@@ -14,6 +14,8 @@
         "gpio.h": "c",
         "oled_optimize.h": "c",
         "keyboard_buttons.h": "c",
-        "oled.h": "c"
+        "oled.h": "c",
+        "oled_controller.h": "c",
+        "cstdint": "c"
     }
 }

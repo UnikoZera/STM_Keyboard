@@ -1,2 +1,5 @@
-../Core/Src/keyboard_controller.c:21:6:Keyboard_Init	8	static
-../Core/Src/keyboard_controller.c:31:6:Keyboard_Update	8	static
+../Core/Src/keyboard_controller.c:29:6:Keyboard_Init	8	static
+../Core/Src/keyboard_controller.c:42:6:Keyboard_Update	8	static
+../Core/Src/keyboard_controller.c:177:6:HAL_TIM_PeriodElapsedCallback	16	static
+../Core/Src/keyboard_controller.c:188:6:Keyboard_Settings_Read	32	static
+../Core/Src/keyboard_controller.c:214:6:Keyboard_Settings_Save	48	static

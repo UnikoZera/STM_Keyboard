@@ -2,4 +2,6 @@
 ../Core/Src/rgb_controller.c:29:6:RGB_SetColor	16	static
 ../Core/Src/rgb_controller.c:39:6:RGB_Clear	16	static
 ../Core/Src/rgb_controller.c:48:6:RGB_Update	32	static
-../Core/Src/rgb_controller.c:80:6:HAL_TIM_PWM_PulseFinishedCallback	16	static
+../Core/Src/rgb_controller.c:81:13:Hue_To_RGB	24	static
+../Core/Src/rgb_controller.c:107:6:RGB_RainbowCycle	16	static
+../Core/Src/rgb_controller.c:128:6:HAL_TIM_PWM_PulseFinishedCallback	16	static
