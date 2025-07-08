@@ -22,7 +22,7 @@ extern uint16_t last_adc_data[4]; // 用于快速触发模式的上次ADC数据
 
 void ADC_Init(void);
 void ADC_Filter(void);
-void ADC_Start_DMA(void); // 丢到updater中
+void ADC_Start_DMA(void);
 
 
 #endif /* INC_ADC_CONTROLLER_H_ */

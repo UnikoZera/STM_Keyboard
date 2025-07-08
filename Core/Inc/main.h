@@ -59,8 +59,6 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define SysWork_Light_Pin GPIO_PIN_13
 #define SysWork_Light_GPIO_Port GPIOC
-#define Mode_Buttom_Pin GPIO_PIN_5
-#define Mode_Buttom_GPIO_Port GPIOA
 #define Key_3_Pin GPIO_PIN_6
 #define Key_3_GPIO_Port GPIOA
 #define Key_4_Pin GPIO_PIN_7
@@ -69,6 +67,10 @@ void Error_Handler(void);
 #define Key_2_GPIO_Port GPIOB
 #define Key_1_Pin GPIO_PIN_1
 #define Key_1_GPIO_Port GPIOB
+#define ESC_Buttom_Pin GPIO_PIN_12
+#define ESC_Buttom_GPIO_Port GPIOB
+#define Mode_Buttom_Pin GPIO_PIN_15
+#define Mode_Buttom_GPIO_Port GPIOB
 #define OLED_SCL_Pin GPIO_PIN_15
 #define OLED_SCL_GPIO_Port GPIOA
 #define RGB_PWM_Pin GPIO_PIN_4

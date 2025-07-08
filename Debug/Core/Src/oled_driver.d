@@ -1,5 +1,6 @@
-Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
- ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal.h \
+Core/Src/oled_driver.o: ../Core/Src/oled_driver.c \
+ ../Core/Inc/oled_driver.h ../Core/Inc/keyboard_controller.h \
+ ../Core/Inc/main.h ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal.h \
  ../Core/Inc/stm32g4xx_hal_conf.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_rcc.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_def.h \
@@ -38,25 +39,21 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_tim_ex.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_uart.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_uart_ex.h \
- ../Core/Inc/adc.h ../Core/Inc/main.h ../Core/Inc/crc.h ../Core/Inc/dma.h \
- ../Core/Inc/i2c.h ../Core/Inc/tim.h ../Core/Inc/usart.h \
- ../USB_Device/App/usb_device.h \
- ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h \
- ../USB_Device/Target/usbd_conf.h ../Core/Inc/gpio.h ../Core/Inc/oled.h \
- ../Core/Inc/i2c.h ../Core/Inc/oled_optimize.h \
- ../Core/Inc/oled_optimize.h ../Core/Inc/rgb_controller.h \
+ ../Core/Inc/oled.h ../Core/Inc/i2c.h ../Core/Inc/oled_optimize.h \
+ ../Core/Inc/oled_controller.h ../Core/Inc/rgb_controller.h \
  ../Core/Inc/tim.h ../Core/Inc/gpio.h ../Core/Inc/adc_controller.h \
- ../Core/Inc/adc.h ../Core/Inc/dma.h ../Core/Inc/keyboard_controller.h \
- ../Core/Inc/oled.h ../Core/Inc/oled_controller.h \
- ../Core/Inc/rgb_controller.h ../Core/Inc/adc_controller.h \
+ ../Core/Inc/adc.h ../Core/Inc/dma.h ../USB_Device/App/usb_device.h \
+ ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h \
+ ../USB_Device/Target/usbd_conf.h \
  ../Middlewares/ST/STM32_USB_Device_Library/Class/HID/Inc/usbd_hid.h \
  ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
  ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h \
  ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h \
  ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
  ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h \
- ../Core/Inc/keyboard_buttons.h ../Core/Inc/crc.h \
- ../Core/Inc/oled_driver.h ../Core/Inc/keyboard_controller.h
+ ../Core/Inc/keyboard_buttons.h ../Core/Inc/crc.h
+../Core/Inc/oled_driver.h:
+../Core/Inc/keyboard_controller.h:
 ../Core/Inc/main.h:
 ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal.h:
 ../Core/Inc/stm32g4xx_hal_conf.h:
@@ -97,32 +94,19 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_tim_ex.h:
 ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_uart.h:
 ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_uart_ex.h:
-../Core/Inc/adc.h:
-../Core/Inc/main.h:
-../Core/Inc/crc.h:
-../Core/Inc/dma.h:
+../Core/Inc/oled.h:
 ../Core/Inc/i2c.h:
+../Core/Inc/oled_optimize.h:
+../Core/Inc/oled_controller.h:
+../Core/Inc/rgb_controller.h:
 ../Core/Inc/tim.h:
-../Core/Inc/usart.h:
+../Core/Inc/gpio.h:
+../Core/Inc/adc_controller.h:
+../Core/Inc/adc.h:
+../Core/Inc/dma.h:
 ../USB_Device/App/usb_device.h:
 ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h:
 ../USB_Device/Target/usbd_conf.h:
-../Core/Inc/gpio.h:
-../Core/Inc/oled.h:
-../Core/Inc/i2c.h:
-../Core/Inc/oled_optimize.h:
-../Core/Inc/oled_optimize.h:
-../Core/Inc/rgb_controller.h:
-../Core/Inc/tim.h:
-../Core/Inc/gpio.h:
-../Core/Inc/adc_controller.h:
-../Core/Inc/adc.h:
-../Core/Inc/dma.h:
-../Core/Inc/keyboard_controller.h:
-../Core/Inc/oled.h:
-../Core/Inc/oled_controller.h:
-../Core/Inc/rgb_controller.h:
-../Core/Inc/adc_controller.h:
 ../Middlewares/ST/STM32_USB_Device_Library/Class/HID/Inc/usbd_hid.h:
 ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h:
 ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h:
@@ -131,5 +115,3 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h:
 ../Core/Inc/keyboard_buttons.h:
 ../Core/Inc/crc.h:
-../Core/Inc/oled_driver.h:
-../Core/Inc/keyboard_controller.h:

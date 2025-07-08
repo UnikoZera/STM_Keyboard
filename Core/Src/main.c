@@ -34,6 +34,7 @@
 #include "rgb_controller.h"
 #include "adc_controller.h"
 #include "keyboard_controller.h"
+#include "oled_driver.h"
 #include <math.h>
 /* USER CODE END Includes */
 
@@ -107,6 +108,7 @@ int main(void)
   MX_USART2_UART_Init();
   MX_TIM6_Init();
   MX_CRC_Init();
+  MX_TIM7_Init();
   /* USER CODE BEGIN 2 */
   Keyboard_Init();
   HAL_Delay(100);
@@ -230,8 +232,7 @@ void Error_Handler(void)
   }
   /* USER CODE END Error_Handler_Debug */
 }
-
-#ifdef  USE_FULL_ASSERT
+#ifdef USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
   *         where the assert_param error has occurred.

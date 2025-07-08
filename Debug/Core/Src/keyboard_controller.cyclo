@@ -1,5 +1,7 @@
-../Core/Src/keyboard_controller.c:29:6:Keyboard_Init	1
-../Core/Src/keyboard_controller.c:42:6:Keyboard_Update	23
-../Core/Src/keyboard_controller.c:177:6:HAL_TIM_PeriodElapsedCallback	3
-../Core/Src/keyboard_controller.c:188:6:Keyboard_Settings_Read	2
-../Core/Src/keyboard_controller.c:214:6:Keyboard_Settings_Save	4
+../Core/Src/keyboard_controller.c:31:6:Keyboard_Init	1
+../Core/Src/keyboard_controller.c:53:6:Keyboard_Read_Input	2
+../Core/Src/keyboard_controller.c:76:6:Handle_Mode_Switch	4
+../Core/Src/keyboard_controller.c:90:6:Keyboard_Updater	7
+../Core/Src/keyboard_controller.c:118:6:HAL_TIM_PeriodElapsedCallback	4
+../Core/Src/keyboard_controller.c:137:6:Keyboard_Settings_Read	2
+../Core/Src/keyboard_controller.c:168:6:Keyboard_Settings_Save	4

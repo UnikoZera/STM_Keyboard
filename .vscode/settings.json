@@ -16,6 +16,7 @@
         "keyboard_buttons.h": "c",
         "oled.h": "c",
         "oled_controller.h": "c",
-        "cstdint": "c"
+        "cstdint": "c",
+        "oled_driver.h": "c"
     }
 }

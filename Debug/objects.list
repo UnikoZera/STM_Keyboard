@@ -8,6 +8,7 @@
 "./Core/Src/main.o"
 "./Core/Src/oled.o"
 "./Core/Src/oled_controller.o"
+"./Core/Src/oled_driver.o"
 "./Core/Src/oled_optimize.o"
 "./Core/Src/rgb_controller.o"
 "./Core/Src/stm32g4xx_hal_msp.o"

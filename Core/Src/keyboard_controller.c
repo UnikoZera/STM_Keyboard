@@ -6,8 +6,10 @@
  */
 
 #include "keyboard_controller.h"
+#include "oled_driver.h"
 
 keyboard_settings_t keyboard_settings;
+keyboard_state_t keyboard_state;
 
 #define FLASH_START_ADDRESS 0x08000000 // 这是STM32G4的Flash起始地址
 #define FLASH_SIZE_PER_SECTOR 0x800 // 每个扇区的大小为2KB
@@ -18,13 +20,13 @@ keyboard_settings_t keyboard_settings;
 #define BYTES_TO_WORDS(bytes) (((bytes) + 3) / 4) // 猜猜我为什么要写这个?
 //* G431的核心是MXC4F,需要使用字节对齐来存储数据,这里保证他即使不是4的倍数也能正确存储
 
-static uint8_t keyboard_mode = 1; // 1是键盘输出模式、2是RGB灯光模式、3是调整键盘阈值大小和开启快速触发模式
+
 static uint8_t keyboard_update_flag = 0; // 键盘更新标志位
 
 // USB HID的协议是第0位为特殊按键(Left Ctrl, Left Shift, Left Alt, Left GUI, Right Ctrl, Right Shift, Right Alt, Right GUI)
 // 第1位为保留位0x00
-// 第2-6位为普通按键(0x00-0xFF) 这里做的是4key盘的协议
-uint8_t hid_buffer[6] = {0};
+// 第2-7位为普通按键(0x00-0xFF) 这里做的是4key键盘的协议(外加ESC)
+uint8_t hid_buffer[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 
 void Keyboard_Init(void)
 {
@@ -37,151 +39,98 @@ void Keyboard_Init(void)
     OLED_EnableFastUpdate(1);
     OLED_Init();
     // USB已经在main中初始化
+
+    keyboard_state.KEY_1 = false;
+    keyboard_state.KEY_2 = false;
+    keyboard_state.KEY_3 = false;
+    keyboard_state.KEY_4 = false;
+
+    keyboard_state.TouchButton_1 = false;
+    keyboard_state.TouchButton_2 = false;
+    keyboard_settings.keyboard_mode = 1;
 }
 
-void Keyboard_Update(void)
+void Keyboard_Read_Input(keyboard_settings_t *settings, keyboard_state_t *state)
 {
-    // 读取ADC数据
     ADC_Filter();
 
-    // 读取mode按钮
-    if (HAL_GPIO_ReadPin(Mode_Buttom_GPIO_Port, Mode_Buttom_Pin) == GPIO_PIN_RESET)
+    state->TouchButton_1 = (HAL_GPIO_ReadPin(ESC_Buttom_GPIO_Port, ESC_Buttom_Pin) == GPIO_PIN_RESET);
+    state->TouchButton_2 = (HAL_GPIO_ReadPin(Mode_Buttom_GPIO_Port, Mode_Buttom_Pin) == GPIO_PIN_RESET);
+
+    if (settings->enable_quick_trigger)
     {
-        HAL_Delay(50); // 防抖
-        if (HAL_GPIO_ReadPin(Mode_Buttom_GPIO_Port, Mode_Buttom_Pin) == GPIO_PIN_RESET)
-        {
-            keyboard_mode++;
-            if (keyboard_mode > 3) // 模式切换，1为键盘模式，2为RGB灯光模式，3为调整键盘阈值大小和开启快速触发模式
-            {
-                keyboard_mode = 1;
-            }
-        }
-        while (HAL_GPIO_ReadPin(Mode_Buttom_GPIO_Port, Mode_Buttom_Pin) == GPIO_PIN_RESET);// 等待按键释放
-    }
+        // TODO: 快速触发模式
 
-    if (keyboard_mode == 1)
+
+    }
+    else
     {
-        // 读取按键状态
-        hid_buffer[0] = KEYBOARD_BUTTON_NONE; // 特殊按键
-        hid_buffer[1] = KEYBOARD_BUTTON_NONE; // 保留位
-
-        if (filter_adc_data[0] > keyboard_settings.trigger_threshold)
-        {
-            hid_buffer[2] = KEYBOARD_BUTTON_D;
-        }
-        else
-        {
-            hid_buffer[2] = KEYBOARD_BUTTON_NONE;
-        }
-
-        if (filter_adc_data[1] > keyboard_settings.trigger_threshold)
-        {
-            hid_buffer[3] = KEYBOARD_BUTTON_F;
-        }
-        else
-        {
-            hid_buffer[3] = KEYBOARD_BUTTON_NONE;
-        }
-        
-        if (filter_adc_data[2] > keyboard_settings.trigger_threshold)
-        {
-            hid_buffer[4] = KEYBOARD_BUTTON_J;
-        }
-        else
-        {
-            hid_buffer[4] = KEYBOARD_BUTTON_NONE;
-        }
-
-        if (filter_adc_data[3] > keyboard_settings.trigger_threshold)
-        {
-            hid_buffer[5] = KEYBOARD_BUTTON_K;
-        }
-        else
-        {
-            hid_buffer[5] = KEYBOARD_BUTTON_NONE;
-        }
-
-        if (keyboard_settings.enable_quick_trigger)
-        {
-            if (filter_adc_data[0] / last_adc_data[0] > keyboard_settings.trigger_slope)
-            {
-                hid_buffer[2] = KEYBOARD_BUTTON_D;
-            }
-            else if (last_adc_data[0] / filter_adc_data[0] > keyboard_settings.trigger_slope)
-            {
-                hid_buffer[2] = KEYBOARD_BUTTON_NONE;
-            }
-
-            if (filter_adc_data[1] / last_adc_data[1] > keyboard_settings.trigger_slope)
-            {
-                hid_buffer[3] = KEYBOARD_BUTTON_F;
-            }
-            else if (last_adc_data[1] / filter_adc_data[1] > keyboard_settings.trigger_slope)
-            {
-                hid_buffer[3] = KEYBOARD_BUTTON_NONE;
-            }
-
-            if (filter_adc_data[2] / last_adc_data[2] > keyboard_settings.trigger_slope)
-            {
-                hid_buffer[4] = KEYBOARD_BUTTON_J;
-            }
-            else if (last_adc_data[2] / filter_adc_data[2] > keyboard_settings.trigger_slope)
-            {
-                hid_buffer[4] = KEYBOARD_BUTTON_NONE;
-            }
-
-            if (filter_adc_data[3] / last_adc_data[3] > keyboard_settings.trigger_slope)
-            {
-                hid_buffer[5] = KEYBOARD_BUTTON_K;
-            }
-            else if (last_adc_data[3] / filter_adc_data[3] > keyboard_settings.trigger_slope)
-            {
-                hid_buffer[5] = KEYBOARD_BUTTON_NONE;
-            }
-        }
-
-        USBD_HID_SendReport(&hUsbDeviceFS, hid_buffer, sizeof(hid_buffer));
+        // 普通触发模式
+        state->KEY_1 = (filter_adc_data[0] > settings->trigger_threshold);
+        state->KEY_2 = (filter_adc_data[1] > settings->trigger_threshold);
+        state->KEY_3 = (filter_adc_data[2] > settings->trigger_threshold);
+        state->KEY_4 = (filter_adc_data[3] > settings->trigger_threshold);
     }
-    else if (keyboard_mode == 2)
-    {
-        OLED_DisplayString(0, 0, "Mode:RGB Stylers");
-        if (filter_adc_data[0] > keyboard_settings.trigger_threshold)
-        {
-            keyboard_settings.rgb_style--;
-        }
-
-        if (filter_adc_data[1] > keyboard_settings.trigger_threshold)
-        {
-            // UP
-        }
-
-        if (filter_adc_data[2] > keyboard_settings.trigger_threshold)
-        {
-            // DOWN
-        }
-
-        if (filter_adc_data[3] > keyboard_settings.trigger_threshold)
-        {
-            keyboard_settings.rgb_style++;
-        }
-    }
-    else if (keyboard_mode == 3)
-    {
-        OLED_DisplayString(0, 0, "Mode:Keyboard Set");
-    }
-
-    keyboard_update_flag = 0; // 清除更新标志位
 }
 
+void Handle_Mode_Switch(keyboard_settings_t *settings, keyboard_state_t *state)
+{
+    static bool last_mode_button_state = false;
+    if (state->TouchButton_2 && !last_mode_button_state) // 检测按钮下降沿
+    {
+        settings->keyboard_mode++;
+        if (settings->keyboard_mode > 3)
+        {
+            settings->keyboard_mode = 1;
+        }
+    }
+    last_mode_button_state = state->TouchButton_2;
+}
+
+void Keyboard_Updater(keyboard_settings_t *settings, keyboard_state_t *state)
+{
+    Keyboard_Read_Input(settings, state);
+    Handle_Mode_Switch(settings, state);
+    hid_buffer[0] = KEYBOARD_BUTTON_NONE; // 特殊按键位
+    hid_buffer[1] = KEYBOARD_BUTTON_NONE; // 保留位
+    hid_buffer[7] = KEYBOARD_BUTTON_NONE; // 这是padding
+
+    hid_buffer[2] = state->KEY_1 ? KEYBOARD_BUTTON_D : KEYBOARD_BUTTON_NONE;
+    hid_buffer[3] = state->KEY_2 ? KEYBOARD_BUTTON_F : KEYBOARD_BUTTON_NONE;
+    hid_buffer[4] = state->KEY_3 ? KEYBOARD_BUTTON_J : KEYBOARD_BUTTON_NONE;
+    hid_buffer[5] = state->KEY_4 ? KEYBOARD_BUTTON_K : KEYBOARD_BUTTON_NONE;
+    hid_buffer[6] = state->TouchButton_1 ? KEYBOARD_BUTTON_ESC : KEYBOARD_BUTTON_NONE;
+    
+    // 这里的TouchButton_2是模式切换按钮,不需要发送到USB HID
+    // 发送USB HID报告
+    if (settings->keyboard_mode == 1)
+    {
+        USBD_HID_SendReport(&hUsbDeviceFS, hid_buffer, sizeof(hid_buffer));
+    }
+    else
+    {
+        OLED_DisplayUI(&keyboard_settings, &keyboard_state);
+    }
+    
+    keyboard_update_flag = 0; // 清除更新标志位
+}
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
     if (htim->Instance == TIM6 && !keyboard_update_flag) // TIM6用于扫描&更新键盘状态
     {
-        keyboard_update_flag = 1; // 设置标志位，表示需要更新
-        Keyboard_Update();
+        keyboard_update_flag = 1;
+        Keyboard_Updater(&keyboard_settings, &keyboard_state);
+    }
+
+    if (htim->Instance == TIM7) // TIM7用于OLED动画计时
+    {
+        msg_counter++;
+        CPS_Counter(); // 计算CPS
     }
 }
+
+
 
 #pragma region EEPROM Simulation
 
@@ -206,7 +155,12 @@ void Keyboard_Settings_Read(void)
         keyboard_settings.trigger_slope = 1.2f;
         keyboard_settings.enable_quick_trigger = 0;
         keyboard_settings.rgb_style = 1;
-        
+        keyboard_settings.keyboard_mode = 1; // 默认是键盘输出模式
+        keyboard_settings.padding[0] = 0;
+        keyboard_settings.padding[1] = 0;
+        keyboard_settings.padding[2] = 0;
+        keyboard_settings.padding[3] = 0;
+
         Keyboard_Settings_Save();
     }
 }
@@ -250,4 +204,5 @@ void Keyboard_Settings_Save(void)
 
     HAL_FLASH_Lock();
 }
+
 #pragma endregion
