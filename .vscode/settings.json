@@ -17,6 +17,10 @@
         "oled.h": "c",
         "oled_controller.h": "c",
         "cstdint": "c",
-        "oled_driver.h": "c"
+        "oled_driver.h": "c",
+        "stdbool.h": "c",
+        "cstring": "c",
+        "*.inc": "c",
+        "*.def": "c"
     }
 }

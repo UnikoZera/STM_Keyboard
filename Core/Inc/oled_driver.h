@@ -14,6 +14,8 @@
 void OLED_UI_Init(void);
 void OLED_DisplayUI(keyboard_settings_t *settings, keyboard_state_t *state);
 
+void CPS_Counter(void);
+
 extern uint64_t msg_counter; // 用于动画计时
 
 

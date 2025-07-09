@@ -106,9 +106,8 @@ int main(void)
   MX_ADC1_Init();
   MX_TIM3_Init();
   MX_USART2_UART_Init();
-  MX_TIM6_Init();
   MX_CRC_Init();
-  MX_TIM7_Init();
+  MX_TIM6_Init();
   /* USER CODE BEGIN 2 */
   Keyboard_Init();
   HAL_Delay(100);
@@ -129,34 +128,34 @@ int main(void)
     }
     else if (keyboard_settings.rgb_style == 2)
     {
-      if (filter_adc_data[0] > keyboard_settings.trigger_threshold)
-      {
-        uint8_t red = rand() % 256;
-        uint8_t green = rand() % 256;
-        uint8_t blue = rand() % 256;
-        RGB_SetColor(0, red, green, blue);
-      }
-      else if (filter_adc_data[1] > keyboard_settings.trigger_threshold)
-      {
-        uint8_t red = rand() % 256;
-        uint8_t green = rand() % 256;
-        uint8_t blue = rand() % 256;
-        RGB_SetColor(1, red, green, blue);
-      }
-      else if (filter_adc_data[2] > keyboard_settings.trigger_threshold)
-      {
-        uint8_t red = rand() % 256;
-        uint8_t green = rand() % 256;
-        uint8_t blue = rand() % 256;
-        RGB_SetColor(2, red, green, blue);
-      }
-      else if (filter_adc_data[3] > keyboard_settings.trigger_threshold)
-      {
-        uint8_t red = rand() % 256;
-        uint8_t green = rand() % 256;
-        uint8_t blue = rand() % 256;
-        RGB_SetColor(3, red, green, blue);
-      }
+      // if ()
+      // {
+      //   uint8_t red = rand() % 256;
+      //   uint8_t green = rand() % 256;
+      //   uint8_t blue = rand() % 256;
+      //   RGB_SetColor(0, red, green, blue);
+      // }
+      // if (filter_adc_data[1] > keyboard_settings.trigger_threshold)
+      // {
+      //   uint8_t red = rand() % 256;
+      //   uint8_t green = rand() % 256;
+      //   uint8_t blue = rand() % 256;
+      //   RGB_SetColor(1, red, green, blue);
+      // }
+      // if (filter_adc_data[2] > keyboard_settings.trigger_threshold)
+      // {
+      //   uint8_t red = rand() % 256;
+      //   uint8_t green = rand() % 256;
+      //   uint8_t blue = rand() % 256;
+      //   RGB_SetColor(2, red, green, blue);
+      // }
+      // if (filter_adc_data[3] > keyboard_settings.trigger_threshold)
+      // {
+      //   uint8_t red = rand() % 256;
+      //   uint8_t green = rand() % 256;
+      //   uint8_t blue = rand() % 256;
+      //   RGB_SetColor(3, red, green, blue);
+      // }
       RGB_Update();
     }
     

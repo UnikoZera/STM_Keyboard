@@ -31,6 +31,8 @@ void ADC_Filter(void)
 
 void ADC_Init(void) // 只需要在初始化调用这个就可以持续收集adc数据
 {
+    memset(last_adc_data, 0, sizeof(last_adc_data));
+    memset(filter_adc_data, 0, sizeof(filter_adc_data));
     HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED);
     HAL_ADCEx_Calibration_Start(&hadc2, ADC_SINGLE_ENDED);
     HAL_Delay(10);

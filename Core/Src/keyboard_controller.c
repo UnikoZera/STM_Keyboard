@@ -19,7 +19,8 @@ keyboard_state_t keyboard_state;
 
 #define BYTES_TO_WORDS(bytes) (((bytes) + 3) / 4) // 猜猜我为什么要写这个?
 //* G431的核心是MXC4F,需要使用字节对齐来存储数据,这里保证他即使不是4的倍数也能正确存储
-
+#define CALCULATE_PRESS_SPEED(adc_value, last_adc_value, time_diff) \
+    ((adc_value - last_adc_value) * 1000 / time_diff) // 计算按下速度,单位是ADC值/ms
 
 static uint8_t keyboard_update_flag = 0; // 键盘更新标志位
 
@@ -40,14 +41,118 @@ void Keyboard_Init(void)
     OLED_Init();
     // USB已经在main中初始化
 
-    keyboard_state.KEY_1 = false;
-    keyboard_state.KEY_2 = false;
-    keyboard_state.KEY_3 = false;
-    keyboard_state.KEY_4 = false;
+    // 初始化键盘状态
+    Keyboard_Settings_Read();
+
+    HAL_Delay(100);
+
+    magnetic_key_info_t *keys_info_init[4] = {
+        &keyboard_state.KEY_1_info,
+        &keyboard_state.KEY_2_info,
+        &keyboard_state.KEY_3_info,
+        &keyboard_state.KEY_4_info
+    };
+
+    uint16_t keys_threshold_init[12] = {
+        keyboard_settings._1trigger_position_threshold,
+        keyboard_settings._2trigger_position_threshold,
+        keyboard_settings._3trigger_position_threshold,
+        keyboard_settings._4trigger_position_threshold,
+
+        keyboard_settings._1trigger_speed_threshold,
+        keyboard_settings._2trigger_speed_threshold,
+        keyboard_settings._3trigger_speed_threshold,
+        keyboard_settings._4trigger_speed_threshold,
+
+        keyboard_settings._1release_speed_threshold,
+        keyboard_settings._2release_speed_threshold,
+        keyboard_settings._3release_speed_threshold,
+        keyboard_settings._4release_speed_threshold
+    };
+
+    for (int i = 0; i < 4; i++)
+    {
+        keys_info_init[i]->key_state = KEY_RELEASED;
+        keys_info_init[i]->trigger_position_threshold = keys_threshold_init[i]; // 触发位置阈值
+        keys_info_init[i]->trigger_speed_threshold = keys_threshold_init[i + 4]; // 触发速度阈值
+        keys_info_init[i]->release_speed_threshold = keys_threshold_init[i + 8]; // 释放速度阈值
+        keys_info_init[i]->press_time = HAL_GetTick(); // 初始化按下时间戳
+        keys_info_init[i]->press_speed = 0; // 初始化按下速度
+    }
 
     keyboard_state.TouchButton_1 = false;
     keyboard_state.TouchButton_2 = false;
     keyboard_settings.keyboard_mode = 1;
+}
+
+// Helper Func
+static void update_key_state(magnetic_key_info_t *key_info, float current_adc, uint16_t pos_threshold, int16_t speed_trigger, int16_t speed_release)
+{
+    switch (key_info->key_state)
+    {
+        case KEY_RELEASED:
+            if (current_adc >= pos_threshold)
+            {
+                key_info->key_state = KEY_PRESSED;
+                key_info->press_time = HAL_GetTick();
+            }
+            else if (key_info->press_speed >= speed_trigger)
+            {
+                key_info->key_state = KEY_PRESSING;
+                key_info->press_time = HAL_GetTick();
+            }
+            break;
+        case KEY_PRESSING:
+            if (current_adc >= pos_threshold)
+            {
+                key_info->key_state = KEY_PRESSED;
+                key_info->press_time = HAL_GetTick();
+            }
+            else if (key_info->press_speed < speed_trigger) // 可能是有点抖动造成的
+            {
+                key_info->key_state = KEY_RELEASED;
+                key_info->press_time = HAL_GetTick();
+            }
+            else if (key_info->press_speed < speed_release)
+            {
+                key_info->key_state = KEY_RELEASING;
+                key_info->press_time = HAL_GetTick();
+            }
+            break;
+        case KEY_PRESSED:
+            if (current_adc < pos_threshold)
+            {
+                key_info->key_state = KEY_RELEASED;
+                key_info->press_time = HAL_GetTick();
+            }
+            else if (key_info->press_speed < speed_release)
+            {
+                key_info->key_state = KEY_RELEASING;
+                key_info->press_time = HAL_GetTick();
+            }
+            break;
+        case KEY_RELEASING:
+            if (current_adc < pos_threshold)
+            {
+                key_info->key_state = KEY_RELEASED;
+                key_info->press_time = HAL_GetTick();
+            }
+            else if (key_info->press_speed > speed_release)
+            {
+                key_info->key_state = KEY_PRESSED;
+                key_info->press_time = HAL_GetTick();
+            }
+            else if (key_info->press_speed >= speed_trigger)
+            {
+                key_info->key_state = KEY_PRESSING;
+                key_info->press_time = HAL_GetTick();
+            }
+            break;
+
+    default:
+        key_info->key_state = KEY_RELEASED;
+        break;
+    }
 }
 
 void Keyboard_Read_Input(keyboard_settings_t *settings, keyboard_state_t *state)
@@ -57,19 +162,39 @@ void Keyboard_Read_Input(keyboard_settings_t *settings, keyboard_state_t *state)
     state->TouchButton_1 = (HAL_GPIO_ReadPin(ESC_Buttom_GPIO_Port, ESC_Buttom_Pin) == GPIO_PIN_RESET);
     state->TouchButton_2 = (HAL_GPIO_ReadPin(Mode_Buttom_GPIO_Port, Mode_Buttom_Pin) == GPIO_PIN_RESET);
 
-    if (settings->enable_quick_trigger)
-    {
-        // TODO: 快速触发模式
+    // 状态机部分
+    magnetic_key_info_t *keys[4] = {
+        &state->KEY_1_info,
+        &state->KEY_2_info,
+        &state->KEY_3_info,
+        &state->KEY_4_info
+    };
 
+    uint16_t pos_thresholds[4] = {
+        settings->_1trigger_position_threshold,
+        settings->_2trigger_position_threshold,
+        settings->_3trigger_position_threshold,
+        settings->_4trigger_position_threshold
+    };
 
-    }
-    else
+    int16_t speed_triggers[4] = {
+        settings->_1trigger_speed_threshold,
+        settings->_2trigger_speed_threshold,
+        settings->_3trigger_speed_threshold,
+        settings->_4trigger_speed_threshold
+    };
+
+    int16_t speed_releases[4] = {
+        settings->_1release_speed_threshold,
+        settings->_2release_speed_threshold,
+        settings->_3release_speed_threshold,
+        settings->_4release_speed_threshold
+    };
+
+    for (int i = 0; i < 4; i++)
     {
-        // 普通触发模式
-        state->KEY_1 = (filter_adc_data[0] > settings->trigger_threshold);
-        state->KEY_2 = (filter_adc_data[1] > settings->trigger_threshold);
-        state->KEY_3 = (filter_adc_data[2] > settings->trigger_threshold);
-        state->KEY_4 = (filter_adc_data[3] > settings->trigger_threshold);
+        keys[i]->press_speed = CALCULATE_PRESS_SPEED(filter_adc_data[i], last_adc_data[i], 1);
+        update_key_state(keys[i], filter_adc_data[i], pos_thresholds[i], speed_triggers[i], speed_releases[i]);
     }
 }
 
@@ -93,29 +218,99 @@ void Keyboard_Updater(keyboard_settings_t *settings, keyboard_state_t *state)
     Handle_Mode_Switch(settings, state);
     hid_buffer[0] = KEYBOARD_BUTTON_NONE; // 特殊按键位
     hid_buffer[1] = KEYBOARD_BUTTON_NONE; // 保留位
+
+    if (settings->enable_quick_trigger)
+    {
+        if (state->KEY_1_info.key_state == KEY_PRESSED || state->KEY_1_info.key_state == KEY_PRESSING)
+        {
+            hid_buffer[2] = KEYBOARD_BUTTON_D;
+        }
+        else if (state->KEY_1_info.key_state == KEY_RELEASED || state->KEY_1_info.key_state == KEY_RELEASING)
+        {
+            hid_buffer[2] = KEYBOARD_BUTTON_NONE;
+        }
+
+        if (state->KEY_2_info.key_state == KEY_PRESSED || state->KEY_2_info.key_state == KEY_PRESSING)
+        {
+            hid_buffer[3] = KEYBOARD_BUTTON_F;
+        }
+        else if (state->KEY_2_info.key_state == KEY_RELEASED || state->KEY_2_info.key_state == KEY_RELEASING)
+        {
+            hid_buffer[3] = KEYBOARD_BUTTON_NONE;
+        }
+
+        if (state->KEY_3_info.key_state == KEY_PRESSED || state->KEY_3_info.key_state == KEY_PRESSING)
+        {
+            hid_buffer[4] = KEYBOARD_BUTTON_J;
+        }
+        else if (state->KEY_3_info.key_state == KEY_RELEASED || state->KEY_3_info.key_state == KEY_RELEASING)
+        {
+            hid_buffer[4] = KEYBOARD_BUTTON_NONE;
+        }
+
+        if (state->KEY_4_info.key_state == KEY_PRESSED || state->KEY_4_info.key_state == KEY_PRESSING)
+        {
+            hid_buffer[5] = KEYBOARD_BUTTON_K;
+        }
+        else if (state->KEY_4_info.key_state == KEY_RELEASED || state->KEY_4_info.key_state == KEY_RELEASING)
+        {
+            hid_buffer[5] = KEYBOARD_BUTTON_NONE;
+        }
+    }
+    else
+    {
+        if (state->KEY_1_info.key_state == KEY_PRESSED)
+        {
+            hid_buffer[2] = KEYBOARD_BUTTON_D;
+        }
+        else if (state->KEY_1_info.key_state == KEY_RELEASED)
+        {
+            hid_buffer[2] = KEYBOARD_BUTTON_NONE;
+        }
+
+        if (state->KEY_2_info.key_state == KEY_PRESSED)
+        {
+            hid_buffer[3] = KEYBOARD_BUTTON_F;
+        }
+        else if (state->KEY_2_info.key_state == KEY_RELEASED)
+        {
+            hid_buffer[3] = KEYBOARD_BUTTON_NONE;
+        }
+
+        if (state->KEY_3_info.key_state == KEY_PRESSED)
+        {
+            hid_buffer[4] = KEYBOARD_BUTTON_J;
+        }
+        else if (state->KEY_3_info.key_state == KEY_RELEASED)
+        {
+            hid_buffer[4] = KEYBOARD_BUTTON_NONE;
+        }
+
+        if (state->KEY_4_info.key_state == KEY_PRESSED)
+        {
+            hid_buffer[5] = KEYBOARD_BUTTON_K;
+        }
+        else if (state->KEY_4_info.key_state == KEY_RELEASED)
+        {
+            hid_buffer[5] = KEYBOARD_BUTTON_NONE;
+        }
+
+    }
+    
+    hid_buffer[6] = state->TouchButton_1 ? KEYBOARD_BUTTON_ESC : KEYBOARD_BUTTON_NONE;
     hid_buffer[7] = KEYBOARD_BUTTON_NONE; // 这是padding
 
-    hid_buffer[2] = state->KEY_1 ? KEYBOARD_BUTTON_D : KEYBOARD_BUTTON_NONE;
-    hid_buffer[3] = state->KEY_2 ? KEYBOARD_BUTTON_F : KEYBOARD_BUTTON_NONE;
-    hid_buffer[4] = state->KEY_3 ? KEYBOARD_BUTTON_J : KEYBOARD_BUTTON_NONE;
-    hid_buffer[5] = state->KEY_4 ? KEYBOARD_BUTTON_K : KEYBOARD_BUTTON_NONE;
-    hid_buffer[6] = state->TouchButton_1 ? KEYBOARD_BUTTON_ESC : KEYBOARD_BUTTON_NONE;
-    
     // 这里的TouchButton_2是模式切换按钮,不需要发送到USB HID
     // 发送USB HID报告
     if (settings->keyboard_mode == 1)
     {
         USBD_HID_SendReport(&hUsbDeviceFS, hid_buffer, sizeof(hid_buffer));
     }
-    else
-    {
-        OLED_DisplayUI(&keyboard_settings, &keyboard_state);
-    }
-    
+
     keyboard_update_flag = 0; // 清除更新标志位
 }
 
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) // 这里是1000hz的定时器中断
 {
     if (htim->Instance == TIM6 && !keyboard_update_flag) // TIM6用于扫描&更新键盘状态
     {
@@ -123,12 +318,16 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
         Keyboard_Updater(&keyboard_settings, &keyboard_state);
     }
 
-    if (htim->Instance == TIM7) // TIM7用于OLED动画计时
+    if (htim->Instance == TIM6)
     {
         msg_counter++;
         CPS_Counter(); // 计算CPS
     }
 }
+
+
+
+
 
 
 
@@ -151,22 +350,49 @@ void Keyboard_Settings_Read(void)
     }
     else
     {
-        keyboard_settings.trigger_threshold = 2000.0f;
-        keyboard_settings.trigger_slope = 1.2f;
-        keyboard_settings.enable_quick_trigger = 0;
-        keyboard_settings.rgb_style = 1;
-        keyboard_settings.keyboard_mode = 1; // 默认是键盘输出模式
-        keyboard_settings.padding[0] = 0;
-        keyboard_settings.padding[1] = 0;
-        keyboard_settings.padding[2] = 0;
-        keyboard_settings.padding[3] = 0;
 
-        Keyboard_Settings_Save();
+        keyboard_settings.keyboard_mode = 1; // 默认模式
+        keyboard_settings.rgb_style = 1; // 默认RGB风格
+        keyboard_settings.enable_quick_trigger = 0; // 默认不开启快速触发
+        keyboard_settings._1trigger_position_threshold = DEFAULT_TRIGGER_POSITION_THRESHOLD;
+        keyboard_settings._1trigger_speed_threshold = DEFAULT_TRIGGER_SPEED_THRESHOLD; // 默认触发速度阈值
+        keyboard_settings._1release_speed_threshold = DEFAULT_RELEASE_SPEED_THRESHOLD; // 默认释放速度
+
+        keyboard_settings._2trigger_position_threshold = DEFAULT_TRIGGER_POSITION_THRESHOLD;
+        keyboard_settings._2trigger_speed_threshold = DEFAULT_TRIGGER_SPEED_THRESHOLD; // 默认触发速度
+        keyboard_settings._2release_speed_threshold = DEFAULT_RELEASE_SPEED_THRESHOLD; // 默认释放速度
+
+        keyboard_settings._3trigger_position_threshold = DEFAULT_TRIGGER_POSITION_THRESHOLD;
+        keyboard_settings._3trigger_speed_threshold = DEFAULT_TRIGGER_SPEED_THRESHOLD; // 默认触发速度
+        keyboard_settings._3release_speed_threshold = DEFAULT_RELEASE_SPEED_THRESHOLD; // 默认释放速度
+
+        keyboard_settings._4trigger_position_threshold = DEFAULT_TRIGGER_POSITION_THRESHOLD;
+        keyboard_settings._4trigger_speed_threshold = DEFAULT_TRIGGER_SPEED_THRESHOLD; // 默认触发速度
+        keyboard_settings._4release_speed_threshold = DEFAULT_RELEASE_SPEED_THRESHOLD; // 默认释放速度
+
+        // Keyboard_Settings_Save(); // Debug时候可以关闭
     }
 }
 
 void Keyboard_Settings_Save(void)
 {
+    // 更改当前settings
+    keyboard_settings._1trigger_position_threshold = keyboard_state.KEY_1_info.trigger_position_threshold;
+    keyboard_settings._1trigger_speed_threshold = keyboard_state.KEY_1_info.trigger_speed_threshold;
+    keyboard_settings._1release_speed_threshold = keyboard_state.KEY_1_info.release_speed_threshold;
+
+    keyboard_settings._2trigger_position_threshold = keyboard_state.KEY_2_info.trigger_position_threshold;
+    keyboard_settings._2trigger_speed_threshold = keyboard_state.KEY_2_info.trigger_speed_threshold;
+    keyboard_settings._2release_speed_threshold = keyboard_state.KEY_2_info.release_speed_threshold;
+
+    keyboard_settings._3trigger_position_threshold = keyboard_state.KEY_3_info.trigger_position_threshold;
+    keyboard_settings._3trigger_speed_threshold = keyboard_state.KEY_3_info.trigger_speed_threshold;
+    keyboard_settings._3release_speed_threshold = keyboard_state.KEY_3_info.release_speed_threshold;
+
+    keyboard_settings._4trigger_position_threshold = keyboard_state.KEY_4_info.trigger_position_threshold;
+    keyboard_settings._4trigger_speed_threshold = keyboard_state.KEY_4_info.trigger_speed_threshold;
+    keyboard_settings._4release_speed_threshold = keyboard_state.KEY_4_info.release_speed_threshold;
+
     // 计算当前设置的CRC校验和，并存入结构体
     keyboard_settings.crc32 = HAL_CRC_Calculate(&hcrc, (uint32_t*)&keyboard_settings, BYTES_TO_WORDS(sizeof(keyboard_settings_t)) - 1);
 

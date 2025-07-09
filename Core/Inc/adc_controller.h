@@ -11,6 +11,7 @@
 #include "main.h"
 #include "adc.h"
 #include "dma.h"
+#include <string.h>
 #include <stdint.h>
 
 extern uint16_t buffer_adc_1[2]; // 包含1·2
