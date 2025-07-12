@@ -7,13 +7,11 @@
 
 #include "oled_driver.h"
 
-static uint64_t cps = 0;
+uint16_t cps = 0;
 uint64_t msg_counter = 0; // 用于动画计时
 
 void OLED_UI_Init(void)
 {
-
-    // 初始化动画管理器
     OLED_InitAnimationManager(&Menu_AnimationManager);
     OLED_InitAnimationManager(&g_Title_AnimationManager);
     OLED_InitAnimationManager(&g_AnimationManager);
@@ -49,7 +47,7 @@ void CPS_Counter(void)
 
     if (msg_counter - last_counter >= 100) // 每100ms计算一次CPS
     {
-        cps = (msg_counter - last_counter) * 10;
+        cps = (uint16_t) ((msg_counter - last_counter) * 10);
         last_counter = msg_counter;
     }
 }

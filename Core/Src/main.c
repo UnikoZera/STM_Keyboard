@@ -117,49 +117,10 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    if (keyboard_settings.rgb_style == 0)
-    {
-      RGB_Clear();
-    }
-    else if (keyboard_settings.rgb_style == 1)
-    {
-      RGB_RainbowCycle();
-      HAL_Delay(100);
-    }
-    else if (keyboard_settings.rgb_style == 2)
-    {
-      // if ()
-      // {
-      //   uint8_t red = rand() % 256;
-      //   uint8_t green = rand() % 256;
-      //   uint8_t blue = rand() % 256;
-      //   RGB_SetColor(0, red, green, blue);
-      // }
-      // if (filter_adc_data[1] > keyboard_settings.trigger_threshold)
-      // {
-      //   uint8_t red = rand() % 256;
-      //   uint8_t green = rand() % 256;
-      //   uint8_t blue = rand() % 256;
-      //   RGB_SetColor(1, red, green, blue);
-      // }
-      // if (filter_adc_data[2] > keyboard_settings.trigger_threshold)
-      // {
-      //   uint8_t red = rand() % 256;
-      //   uint8_t green = rand() % 256;
-      //   uint8_t blue = rand() % 256;
-      //   RGB_SetColor(2, red, green, blue);
-      // }
-      // if (filter_adc_data[3] > keyboard_settings.trigger_threshold)
-      // {
-      //   uint8_t red = rand() % 256;
-      //   uint8_t green = rand() % 256;
-      //   uint8_t blue = rand() % 256;
-      //   RGB_SetColor(3, red, green, blue);
-      // }
-      RGB_Update();
-    }
-    
+    RGB_Loop();
 
+
+    
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

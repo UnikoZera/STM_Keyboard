@@ -151,6 +151,7 @@ static void update_key_state(magnetic_key_info_t *key_info, float current_adc, u
 
     default:
         key_info->key_state = KEY_RELEASED;
+        key_info->press_time = HAL_GetTick();
         break;
     }
 }
