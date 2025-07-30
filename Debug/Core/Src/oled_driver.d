@@ -40,9 +40,10 @@ Core/Src/oled_driver.o: ../Core/Src/oled_driver.c \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_uart.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_uart_ex.h \
  ../Core/Inc/oled.h ../Core/Inc/i2c.h ../Core/Inc/oled_optimize.h \
- ../Core/Inc/oled_controller.h ../Core/Inc/rgb_controller.h \
- ../Core/Inc/tim.h ../Core/Inc/gpio.h ../Core/Inc/adc_controller.h \
- ../Core/Inc/adc.h ../Core/Inc/dma.h ../USB_Device/App/usb_device.h \
+ ../Core/Inc/oled_controller.h ../Core/Inc/icon.h \
+ ../Core/Inc/rgb_controller.h ../Core/Inc/tim.h ../Core/Inc/gpio.h \
+ ../Core/Inc/adc_controller.h ../Core/Inc/adc.h ../Core/Inc/dma.h \
+ ../USB_Device/App/usb_device.h \
  ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h \
  ../USB_Device/Target/usbd_conf.h \
  ../Middlewares/ST/STM32_USB_Device_Library/Class/HID/Inc/usbd_hid.h \
@@ -98,6 +99,7 @@ Core/Src/oled_driver.o: ../Core/Src/oled_driver.c \
 ../Core/Inc/i2c.h:
 ../Core/Inc/oled_optimize.h:
 ../Core/Inc/oled_controller.h:
+../Core/Inc/icon.h:
 ../Core/Inc/rgb_controller.h:
 ../Core/Inc/tim.h:
 ../Core/Inc/gpio.h:

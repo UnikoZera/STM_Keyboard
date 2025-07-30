@@ -27,8 +27,11 @@
 #define DEFAULT_RELEASE_SPEED_THRESHOLD 50
 
 typedef struct {
-    uint8_t  keyboard_mode; // 1是键盘输出模式、2是RGB灯光模式、3是调整键盘阈值大小和开启快速触发模式
+    uint8_t  keyboard_mode; // 1是键盘输出模式、2是键盘设置模式
     uint8_t  rgb_style;
+    uint8_t rgb_speed;
+    uint8_t rgb_brightness;
+    uint8_t showCPS; // 是否显示CPS
     uint8_t  enable_quick_trigger;
 
     // keyboard trigger settings
@@ -48,7 +51,7 @@ typedef struct {
     uint16_t _4trigger_speed_threshold;
     uint16_t _4release_speed_threshold;
 
-    uint8_t  padding[5];
+    uint8_t  padding[2];
     // 注意: 这里的padding是为了确保结构体大小为8的倍数
     uint32_t crc32;   // 用于校验数据是否有效
 } keyboard_settings_t;
@@ -84,7 +87,6 @@ extern keyboard_settings_t keyboard_settings;
 extern keyboard_state_t keyboard_state;
 
 void Keyboard_Init(void);
-void Handle_Mode_Switch(keyboard_settings_t *settings, keyboard_state_t *state);
 void Keyboard_Read_Input(keyboard_settings_t *settings, keyboard_state_t *state);
 void Keyboard_Updater(keyboard_settings_t *settings, keyboard_state_t *state);
 

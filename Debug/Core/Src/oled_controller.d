@@ -39,7 +39,8 @@ Core/Src/oled_controller.o: ../Core/Src/oled_controller.c \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_tim_ex.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_uart.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_uart_ex.h \
- ../Core/Inc/oled.h ../Core/Inc/i2c.h ../Core/Inc/oled_optimize.h
+ ../Core/Inc/oled.h ../Core/Inc/i2c.h ../Core/Inc/oled_optimize.h \
+ ../Core/Inc/icon.h
 ../Core/Inc/oled_controller.h:
 ../Core/Inc/main.h:
 ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal.h:
@@ -84,3 +85,4 @@ Core/Src/oled_controller.o: ../Core/Src/oled_controller.c \
 ../Core/Inc/oled.h:
 ../Core/Inc/i2c.h:
 ../Core/Inc/oled_optimize.h:
+../Core/Inc/icon.h:

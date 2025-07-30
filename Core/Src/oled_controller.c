@@ -374,7 +374,7 @@ void AnimationLoop()
 // 结束使用底层动画实现的方块动画
 
 // 动画管理器全局管理部分
-AnimationManager_t Menu_AnimationManager;    // 菜单动画管理器
+AnimationManager_t g_Icon_AnimationManager;    // 菜单动画管理器
 AnimationManager_t g_Title_AnimationManager; // 标题动画管理器
 AnimationManager_t g_AnimationManager;       // 全局动画管理器
 
@@ -808,72 +808,66 @@ void OLED_DrawLine(int16_t x1, int16_t y1, int16_t x2, int16_t y2) //! UPDATEDIS
     }
 }
 
-// // 绘制图标 - 40x40水平扫描格式
-// void OLED_DrawIcon(int16_t x, int16_t y, IconType_t iconType) //! UPDATEDISPLAY REQUIRED
-// {
-//     const unsigned char *iconData = NULL;
-//     uint8_t iconWidth = 36;  // 图标宽度（36像素）
-//     uint8_t iconHeight = 36; // 图标高度（36像素）
+// 36x36图标绘制函数
+void OLED_DrawIcon(int16_t x, int16_t y, IconType_t iconType) //! UPDATEDISPLAY REQUIRED
+{
+    const unsigned char *iconData = NULL;
+    uint8_t iconWidth = 36;  // 图标宽度（36像素）
+    uint8_t iconHeight = 36; // 图标高度（36像素）
 
-//     // 根据图标类型选择对应的数据
-//     switch (iconType)
-//     {
-//     case ICON_GAME:
-//         iconData = IMG_GAME_DATA;
-//         break;
-//     case ICON_TOOL:
-//         iconData = IMG_TOOL_DATA;
-//         break;
-//     case ICON_STATUS:
-//         iconData = IMG_STATUS_DATA;
-//         break;
-//     case ICON_SETTINGS:
-//         iconData = IMG_SETTINGS_DATA;
-//         break;
-//     case ICON_ABOUT:
-//         iconData = IMG_ABOUT_DATA;
-//         break;
-//     case ICON_DEVELOPER:
-//         iconData = IMG_DEVELOPER_DATA;
-//         break;
-//     default:
-//         return; // 无效的图标类型，直接返回
-//     }
+    // 根据图标类型选择对应的数据
+    switch (iconType)
+    {
+    case ICON_MENU:
+        iconData = IMG_MENU_DATA;
+        break;
+    case ICON_TOOL:
+        iconData = IMG_TOOL_DATA;
+        break;
+    case ICON_RGB:
+        iconData = IMG_RGB_DATA;
+        break;
+    case ICON_SETTINGS:
+        iconData = IMG_SETTINGS_DATA;
+        break;
+    default:
+        return; // 无效的图标类型，直接返回
+    }
 
-//     // 检查图标数据是否有效
-//     if (iconData == NULL)
-//         return;    // 水平扫描格式：从左往右，从上往下，每8个像素一个字节
-//     // 36像素宽度需要5个字节每行（36/8=4.5，向上取整为5），36行共180字节
-//     for (uint8_t row = 0; row < iconHeight; row++)
-//     {
-//         for (uint8_t col = 0; col < iconWidth; col++)
-//         {
-//             // 计算当前像素在屏幕上的坐标
-//             int16_t pixel_x = x + col;
-//             int16_t pixel_y = y + row;
+    // 检查图标数据是否有效
+    if (iconData == NULL)
+        return;    // 水平扫描格式：从左往右，从上往下，每8个像素一个字节
+    // 36像素宽度需要5个字节每行（36/8=4.5，向上取整为5），36行共180字节
+    for (uint8_t row = 0; row < iconHeight; row++)
+    {
+        for (uint8_t col = 0; col < iconWidth; col++)
+        {
+            // 计算当前像素在屏幕上的坐标
+            int16_t pixel_x = x + col;
+            int16_t pixel_y = y + row;
 
-//             // 边界检查
-//             if (pixel_x < 0 || pixel_x >= OLED_WIDTH ||
-//                 pixel_y < 0 || pixel_y >= OLED_HEIGHT)
-//                 continue;
+            // 边界检查
+            if (pixel_x < 0 || pixel_x >= OLED_WIDTH ||
+                pixel_y < 0 || pixel_y >= OLED_HEIGHT)
+                continue;
 
-//             // 水平扫描格式的数据组织方式：
-//             // 每行有5个字节（36像素/8像素每字节，向上取整）
-//             // byte_index = 行索引 * 5 + 当前列在该行中的字节位置
-//             uint16_t byte_index = row * 5 + (col / 8);
-//             uint8_t bit_index = col % 8;
+            // 水平扫描格式的数据组织方式：
+            // 每行有5个字节（36像素/8像素每字节，向上取整）
+            // byte_index = 行索引 * 5 + 当前列在该行中的字节位置
+            uint16_t byte_index = row * 5 + (col / 8);
+            uint8_t bit_index = col % 8;
 
-//             // 检查字节索引是否在有效范围内
-//             if (byte_index < 180) // 图标数据大小为180字节（36*36像素，每行5字节）
-//             {
-//                 // 提取像素值（从字节的最高位开始，从左到右）
-//                 uint8_t pixel_value = (iconData[byte_index] >> (7 - bit_index)) & 0x01;
+            // 检查字节索引是否在有效范围内
+            if (byte_index < 180) // 图标数据大小为180字节（36*36像素，每行5字节）
+            {
+                // 提取像素值（从字节的最高位开始，从左到右）
+                uint8_t pixel_value = (iconData[byte_index] >> (7 - bit_index)) & 0x01;
 
-//                 // 绘制像素
-//                 OLED_WritePixel(pixel_x, pixel_y, pixel_value);
-//             }
-//         }
-//     }
-// }
+                // 绘制像素
+                OLED_WritePixel(pixel_x, pixel_y, pixel_value);
+            }
+        }
+    }
+}
 
 #pragma endregion OLED_EPICFUL_UI

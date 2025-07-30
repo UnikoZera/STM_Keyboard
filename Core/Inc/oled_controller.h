@@ -14,7 +14,7 @@
 #define MAX_ANIMATIONS 20 // Manager的最大动画数量(包含X、Y轴同时移动)
 
 #include "oled.h"
-// #include "icon.h"
+#include "icon.h"
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -74,7 +74,7 @@ typedef struct
     uint8_t count;
 } AnimationManager_t; // 动画管理器结构体，每个动画对象都有一个标签和两个动画（X和Y坐标）他包含了多个动画对象的数组和一个计数器，表示当前动画对象的数量
 
-extern AnimationManager_t Menu_AnimationManager;
+extern AnimationManager_t g_Icon_AnimationManager;
 extern AnimationManager_t g_Title_AnimationManager; // 标题动画管理器
 extern AnimationManager_t g_AnimationManager; // 全局动画管理器
 
@@ -114,7 +114,7 @@ void OLED_DrawRectangle(int16_t x, int16_t y, uint8_t width, uint8_t height);
 void OLED_DrawFilledRectangle(int16_t x, int16_t y, uint8_t width, uint8_t height, uint8_t color);
 void OLED_DrawLine(int16_t x1, int16_t y1, int16_t x2, int16_t y2);
 void OLED_InvertArea(int16_t x, int16_t y, uint8_t width, uint8_t height);
-// void OLED_DrawIcon(int16_t x, int16_t y, IconType_t iconType);
+void OLED_DrawIcon(int16_t x, int16_t y, IconType_t iconType);
 
 #pragma endregion funcs
 

@@ -63,7 +63,7 @@ void MX_GPIO_Init(void)
   /*Configure GPIO pins : ESC_Buttom_Pin Mode_Buttom_Pin */
   GPIO_InitStruct.Pin = ESC_Buttom_Pin|Mode_Buttom_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 }

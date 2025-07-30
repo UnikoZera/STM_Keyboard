@@ -21,6 +21,8 @@
         "stdbool.h": "c",
         "cstring": "c",
         "*.inc": "c",
-        "*.def": "c"
+        "*.def": "c",
+        "stm32g4xx_hal.h": "c",
+        "stdio.h": "c"
     }
 }

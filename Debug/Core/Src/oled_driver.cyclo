@@ -1,3 +1,9 @@
-../Core/Src/oled_driver.c:13:6:OLED_UI_Init	1
-../Core/Src/oled_driver.c:20:6:OLED_DisplayUI	2
-../Core/Src/oled_driver.c:44:6:CPS_Counter	2
+../Core/Src/oled_driver.c:52:6:OLED_UI_Init	1
+../Core/Src/oled_driver.c:62:6:Move_Menu_Elements	7
+../Core/Src/oled_driver.c:119:6:Move_Sub_Title	2
+../Core/Src/oled_driver.c:133:6:Get_OLED_Input	11
+../Core/Src/oled_driver.c:174:6:OLED_Drawer	18
+../Core/Src/oled_driver.c:290:6:OLED_StateMachine	88
+../Core/Src/oled_driver.c:651:6:OLED_UI_Loop	2
+../Core/Src/oled_driver.c:689:6:OLED_DisplayUI	1
+../Core/Src/oled_driver.c:702:6:CPS_Counter	2

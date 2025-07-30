@@ -47,3 +47,4 @@
 ../Core/Src/oled_controller.c:611:6:OLED_DrawRectangle	15
 ../Core/Src/oled_controller.c:700:6:OLED_DrawFilledRectangle	15
 ../Core/Src/oled_controller.c:777:6:OLED_DrawLine	9
+../Core/Src/oled_controller.c:812:6:OLED_DrawIcon	13

@@ -45,4 +45,3 @@ void ADC_Start_DMA(void)
     HAL_ADC_Start_DMA(&hadc1, (uint32_t*)buffer_adc_1, sizeof(buffer_adc_1)/sizeof(uint16_t));
     HAL_ADC_Start_DMA(&hadc2, (uint32_t*)buffer_adc_2, sizeof(buffer_adc_2)/sizeof(uint16_t));
 }
-

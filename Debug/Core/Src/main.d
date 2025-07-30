@@ -46,7 +46,7 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Core/Inc/i2c.h ../Core/Inc/oled_optimize.h \
  ../Core/Inc/oled_optimize.h ../Core/Inc/rgb_controller.h \
  ../Core/Inc/tim.h ../Core/Inc/gpio.h ../Core/Inc/keyboard_controller.h \
- ../Core/Inc/oled.h ../Core/Inc/oled_controller.h \
+ ../Core/Inc/oled.h ../Core/Inc/oled_controller.h ../Core/Inc/icon.h \
  ../Core/Inc/rgb_controller.h ../Core/Inc/adc_controller.h \
  ../Core/Inc/adc.h ../Core/Inc/dma.h \
  ../Middlewares/ST/STM32_USB_Device_Library/Class/HID/Inc/usbd_hid.h \
@@ -119,6 +119,7 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Core/Inc/keyboard_controller.h:
 ../Core/Inc/oled.h:
 ../Core/Inc/oled_controller.h:
+../Core/Inc/icon.h:
 ../Core/Inc/rgb_controller.h:
 ../Core/Inc/adc_controller.h:
 ../Core/Inc/adc.h:

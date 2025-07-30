@@ -39,6 +39,7 @@ void Keyboard_Init(void)
     OLED_EnableDiffMode(1);
     OLED_EnableFastUpdate(1);
     OLED_Init();
+    OLED_UI_Init();
     // USB已经在main中初始化
 
     // 初始化键盘状态
@@ -46,14 +47,16 @@ void Keyboard_Init(void)
 
     HAL_Delay(100);
 
-    magnetic_key_info_t *keys_info_init[4] = {
+    magnetic_key_info_t *keys_info_init[4] = 
+    {
         &keyboard_state.KEY_1_info,
         &keyboard_state.KEY_2_info,
         &keyboard_state.KEY_3_info,
         &keyboard_state.KEY_4_info
     };
 
-    uint16_t keys_threshold_init[12] = {
+    uint16_t keys_threshold_init[12] = 
+    {
         keyboard_settings._1trigger_position_threshold,
         keyboard_settings._2trigger_position_threshold,
         keyboard_settings._3trigger_position_threshold,
@@ -160,32 +163,36 @@ void Keyboard_Read_Input(keyboard_settings_t *settings, keyboard_state_t *state)
 {
     ADC_Filter();
 
-    state->TouchButton_1 = (HAL_GPIO_ReadPin(ESC_Buttom_GPIO_Port, ESC_Buttom_Pin) == GPIO_PIN_RESET);
-    state->TouchButton_2 = (HAL_GPIO_ReadPin(Mode_Buttom_GPIO_Port, Mode_Buttom_Pin) == GPIO_PIN_RESET);
+    state->TouchButton_1 = (HAL_GPIO_ReadPin(ESC_Buttom_GPIO_Port, ESC_Buttom_Pin) == GPIO_PIN_SET);
+    state->TouchButton_2 = (HAL_GPIO_ReadPin(Mode_Buttom_GPIO_Port, Mode_Buttom_Pin) == GPIO_PIN_SET);
 
     // 状态机部分
-    magnetic_key_info_t *keys[4] = {
+    magnetic_key_info_t *keys[4] = 
+    {
         &state->KEY_1_info,
         &state->KEY_2_info,
         &state->KEY_3_info,
         &state->KEY_4_info
     };
 
-    uint16_t pos_thresholds[4] = {
+    uint16_t pos_thresholds[4] = 
+    {
         settings->_1trigger_position_threshold,
         settings->_2trigger_position_threshold,
         settings->_3trigger_position_threshold,
         settings->_4trigger_position_threshold
     };
 
-    int16_t speed_triggers[4] = {
+    int16_t speed_triggers[4] = 
+    {
         settings->_1trigger_speed_threshold,
         settings->_2trigger_speed_threshold,
         settings->_3trigger_speed_threshold,
         settings->_4trigger_speed_threshold
     };
 
-    int16_t speed_releases[4] = {
+    int16_t speed_releases[4] = 
+    {
         settings->_1release_speed_threshold,
         settings->_2release_speed_threshold,
         settings->_3release_speed_threshold,
@@ -199,24 +206,9 @@ void Keyboard_Read_Input(keyboard_settings_t *settings, keyboard_state_t *state)
     }
 }
 
-void Handle_Mode_Switch(keyboard_settings_t *settings, keyboard_state_t *state)
-{
-    static bool last_mode_button_state = false;
-    if (state->TouchButton_2 && !last_mode_button_state) // 检测按钮下降沿
-    {
-        settings->keyboard_mode++;
-        if (settings->keyboard_mode > 3)
-        {
-            settings->keyboard_mode = 1;
-        }
-    }
-    last_mode_button_state = state->TouchButton_2;
-}
-
 void Keyboard_Updater(keyboard_settings_t *settings, keyboard_state_t *state)
 {
     Keyboard_Read_Input(settings, state);
-    Handle_Mode_Switch(settings, state);
     hid_buffer[0] = KEYBOARD_BUTTON_NONE; // 特殊按键位
     hid_buffer[1] = KEYBOARD_BUTTON_NONE; // 保留位
 
